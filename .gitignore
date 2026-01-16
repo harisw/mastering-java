@@ -1,0 +1,72 @@
+############################
+# OS / Editor junk
+############################
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+############################
+# Java build artifacts
+############################
+*.class
+*.jar
+*.war
+*.ear
+
+############################
+# Maven
+############################
+**/target/
+**/dependency-reduced-pom.xml
+**/.mvn/wrapper/maven-wrapper.jar
+
+############################
+# Gradle
+############################
+**/.gradle/
+**/build/
+**/gradlew
+**/gradlew.bat
+
+############################
+# Tomcat / Servlet
+############################
+**/out/
+**/work/
+**/logs/
+**/temp/
+**/webapps/
+**/*.log
+
+############################
+# IntelliJ / Eclipse / NetBeans
+############################
+**/*.iml
+**/.project
+**/.classpath
+**/.settings/
+**/nbproject/
+
+############################
+# VS Code Java
+############################
+**/.classpath
+**/.factorypath
+
+############################
+# Environment & secrets
+############################
+**/.env
+**/*.env
+**/*.local
+**/*secret*
+**/*credential*
+
+############################
+# Misc
+############################
+**/.cache/
+**/.idea_modules/
