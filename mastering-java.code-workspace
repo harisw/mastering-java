@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "concatenate",
+			"path": "concatenate"
+		},
+		{
+			"name": "ExpenseTracker",
+			"path": "ExpenseTracker"
+		}
+	],
+	"settings": {
+		"jdk.runConfig.arguments": "\"31,20,15,17\" \"20,19,17,45\""
+	}
+}
