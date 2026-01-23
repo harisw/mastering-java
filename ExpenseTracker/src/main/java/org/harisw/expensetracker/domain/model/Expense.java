@@ -1,31 +1,42 @@
 package org.harisw.expensetracker.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class Expense {
     private final UUID id;
     private final UUID userId;
     private Money amount;
-    private LocalDateTime time;
+    private LocalDate date;
     private String description;
-    private final Category category;
+    private final UUID categoryId;
 
-    public Expense(Money amount, UUID userId, Category category, String description, LocalDateTime time) {
+    public Expense(UUID userId, Money amount, UUID categoryId, String description, LocalDate date) {
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.amount = amount;
-        this.category = category;
+        this.categoryId = categoryId;
         this.description = description;
-        this.time = time;
+        this.date = date;
     }
 
-   public UUID getId() {
+    public Expense(UUID id, UUID userId, Money amount, UUID categoryId, String description, LocalDate date) {
+        this.id = id;
+        this.userId = userId;
+        this.amount = amount;
+        this.categoryId = categoryId;
+        this.description = description;
+        this.date = date;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public Category getCategory() {
-        return category;
+    
+
+    public UUID getCategoryId() {
+        return categoryId;
     }
 
     public Money getAmount() {
@@ -37,12 +48,12 @@ public class Expense {
         this.amount = newAmount;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setTime(LocalDate date) {
+        this.date = date;
     }
 
     public String getDescription() {
@@ -53,17 +64,23 @@ public class Expense {
         this.description = description;
     }
 
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Expense{");
         sb.append("id=").append(id);
         sb.append(", amount=").append(amount);
-        sb.append(", time=").append(time);
+        sb.append(", time=").append(date);
         sb.append(", description=").append(description);
-        sb.append(", category=").append(category);
+        sb.append(", category=").append(categoryId);
         sb.append('}');
         return sb.toString();
+    }
+
+    public UUID getUserId() {
+        return userId;
     }
 
 }
