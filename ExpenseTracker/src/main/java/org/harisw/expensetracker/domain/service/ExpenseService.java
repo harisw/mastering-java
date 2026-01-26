@@ -1,5 +1,6 @@
 package org.harisw.expensetracker.domain.service;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import org.harisw.expensetracker.domain.model.Expense;
@@ -12,15 +13,15 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
 
     public ExpenseService(UserRepository userRepository,
-                            ExpenseRepository expenseRepository) {
+                          ExpenseRepository expenseRepository) {
         this.userRepository = userRepository;
         this.expenseRepository = expenseRepository;
     }
 
-    public Expense addExpense(UUID userId, Expense expense) {
+    public Expense addExpense(UUID userId, Expense expense) throws SQLException {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         return expenseRepository.save(expense);
     }
 }

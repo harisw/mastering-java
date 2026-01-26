@@ -20,6 +20,15 @@ public class Expense {
         this.date = date;
     }
 
+    public Expense(UUID userId, Money amount, UUID categoryId, String description) {
+        this.id = UUID.randomUUID();
+        this.userId = userId;
+        this.amount = amount;
+        this.categoryId = categoryId;
+        this.description = description;
+        this.date = LocalDate.now();
+    }
+
     public Expense(UUID id, UUID userId, Money amount, UUID categoryId, String description, LocalDate date) {
         this.id = id;
         this.userId = userId;
@@ -33,7 +42,6 @@ public class Expense {
         return id;
     }
 
-    
 
     public UUID getCategoryId() {
         return categoryId;
@@ -63,7 +71,6 @@ public class Expense {
     public void setDescription(String description) {
         this.description = description;
     }
-
 
 
     @Override
