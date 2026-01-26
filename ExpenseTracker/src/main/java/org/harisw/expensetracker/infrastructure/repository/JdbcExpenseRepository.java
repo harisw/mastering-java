@@ -33,7 +33,7 @@ public class JdbcExpenseRepository implements ExpenseRepository {
             ps.setBigDecimal(3, expense.getAmount().getAmount());
             ps.setObject(4, expense.getCategoryId());
             ps.setString(5, expense.getDescription());
-            ps.setDate(6, Date.valueOf(expense.getDate()));
+            ps.setDate(6, Date.valueOf(expense.getCreatedAt()));
 
             ps.executeUpdate();
             return expense;

@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,12 +62,11 @@ public class JdbcExpenseRepositoryTest {
         UUID categoryId = UUID.randomUUID();
 
         Money amount = new Money(new BigDecimal("30.00"));
-        Expense expense = new Expense(
+        Expense expense = Expense.withDefaults(
                 userId,
                 amount,
                 categoryId,
-                "Dinner",
-                LocalDate.now()
+                "Dinner"
         );
         expenseRepository.save(expense);
 
@@ -84,11 +82,11 @@ public class JdbcExpenseRepositoryTest {
         UUID user2 = UUID.randomUUID();
         UUID categoryId = UUID.randomUUID();
 
-        expenseRepository.save(new Expense(user1, new Money(new BigDecimal("10.00")), categoryId, "Coffee"));
+        expenseRepository.save(Expense.withDefaults(user1, new Money(new BigDecimal("10.00")), categoryId, "Coffee"));
 
-        expenseRepository.save(new Expense(user2, new Money(new BigDecimal("20.00")), categoryId, "Taxi"));
+        expenseRepository.save(Expense.withDefaults(user2, new Money(new BigDecimal("20.00")), categoryId, "Taxi"));
 
-        expenseRepository.save(new Expense(user1, new Money(new BigDecimal("15.00")), categoryId, "Snack"));
+        expenseRepository.save(Expense.withDefaults(user1, new Money(new BigDecimal("15.00")), categoryId, "Snack"));
 
         List<Expense> user1Expenses = expenseRepository.findByUserId(user1);
 

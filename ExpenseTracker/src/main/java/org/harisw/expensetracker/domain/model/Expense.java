@@ -7,35 +7,21 @@ public class Expense {
     private final UUID id;
     private final UUID userId;
     private Money amount;
-    private LocalDate date;
+    private LocalDate createdAt;
     private String description;
     private final UUID categoryId;
 
-    public Expense(UUID userId, Money amount, UUID categoryId, String description, LocalDate date) {
-        this.id = UUID.randomUUID();
-        this.userId = userId;
-        this.amount = amount;
-        this.categoryId = categoryId;
-        this.description = description;
-        this.date = date;
-    }
-
-    public Expense(UUID userId, Money amount, UUID categoryId, String description) {
-        this.id = UUID.randomUUID();
-        this.userId = userId;
-        this.amount = amount;
-        this.categoryId = categoryId;
-        this.description = description;
-        this.date = LocalDate.now();
-    }
-
-    public Expense(UUID id, UUID userId, Money amount, UUID categoryId, String description, LocalDate date) {
+    public Expense(UUID id, UUID userId, Money amount, UUID categoryId, String description, LocalDate createdAt) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
         this.categoryId = categoryId;
         this.description = description;
-        this.date = date;
+        this.createdAt = createdAt;
+    }
+
+    public static Expense withDefaults(UUID userId, Money amount, UUID categoryId, String description) {
+        return new Expense(UUID.randomUUID(), userId, amount, categoryId, description, LocalDate.now());
     }
 
     public UUID getId() {
@@ -56,12 +42,12 @@ public class Expense {
         this.amount = newAmount;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTime(LocalDate date) {
-        this.date = date;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getDescription() {
@@ -79,7 +65,7 @@ public class Expense {
         sb.append("Expense{");
         sb.append("id=").append(id);
         sb.append(", amount=").append(amount);
-        sb.append(", time=").append(date);
+        sb.append(", time=").append(createdAt);
         sb.append(", description=").append(description);
         sb.append(", category=").append(categoryId);
         sb.append('}');
