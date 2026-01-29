@@ -3,6 +3,7 @@ package org.harisw.expensetracker.infrastructure.repository;
 import org.harisw.expensetracker.domain.model.Expense;
 import org.harisw.expensetracker.domain.model.Money;
 import org.harisw.expensetracker.domain.repository.ExpenseRepository;
+import org.harisw.expensetracker.infrastructure.db.DbConnection;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -14,18 +15,12 @@ import java.util.UUID;
 
 public class JdbcExpenseRepository implements ExpenseRepository {
 
-    private final DataSource dataSource;
-
-    public JdbcExpenseRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     @Override
     public Expense save(Expense expense) throws SQLException {
         String sql = "INSERT INTO expenses (id, user_id, amount, category_id, description, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DbConnection.get();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setObject(1, expense.getId());
@@ -41,11 +36,35 @@ public class JdbcExpenseRepository implements ExpenseRepository {
     }
 
     @Override
+    public List<Expense> findAll() throws SQLException {
+        String sql = "SELECT * FROM expenses";
+        List<Expense> result = new ArrayList<>();
+
+        try (Connection conn = DbConnection.get();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    UUID id = (UUID) rs.getObject("id");
+                    UUID userId = (UUID) rs.getObject("userId");
+                    BigDecimal amount = rs.getBigDecimal("amount");
+                    UUID categoryId = (UUID) rs.getObject("category_id");
+                    LocalDate date = rs.getDate("created_at").toLocalDate();
+                    String desc = rs.getString("description");
+
+                    result.add(new Expense(id, userId, new Money(amount), categoryId, desc, date));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<Expense> findByUserId(UUID userId) throws SQLException {
         String sql = "SELECT * FROM expenses WHERE user_id = ?";
         List<Expense> result = new ArrayList<>();
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DbConnection.get();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setObject(1, userId);

@@ -8,5 +8,6 @@ import org.harisw.expensetracker.domain.model.Expense;
 
 public interface ExpenseRepository {
     Expense save(Expense expense) throws SQLException;
+    List<Expense> findAll() throws SQLException;
     List<Expense> findByUserId(UUID userId) throws SQLException;
 }
