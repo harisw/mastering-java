@@ -9,14 +9,18 @@ import org.harisw.expensetracker.domain.repository.ExpenseRepository;
 import org.harisw.expensetracker.domain.service.ExpenseService;
 import org.harisw.expensetracker.infrastructure.repository.JdbcExpenseRepository;
 import org.harisw.expensetracker.web.ExpenseController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Administrator
  */
 public class ExpenseTracker {
+    private static final Logger log = LoggerFactory.getLogger(ExpenseTracker.class);
 
     public static void main(String[] args) {
+        log.info("Starting ExpenseTracker app");
         ExpenseRepository repository = new JdbcExpenseRepository();
 
         ExpenseService service = new ExpenseService(repository);

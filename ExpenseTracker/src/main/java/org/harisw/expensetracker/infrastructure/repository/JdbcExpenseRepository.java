@@ -4,6 +4,8 @@ import org.harisw.expensetracker.domain.model.Expense;
 import org.harisw.expensetracker.domain.model.Money;
 import org.harisw.expensetracker.domain.repository.ExpenseRepository;
 import org.harisw.expensetracker.infrastructure.db.DbConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class JdbcExpenseRepository implements ExpenseRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(JdbcExpenseRepository.class);
 
     @Override
     public Expense save(Expense expense) throws SQLException {
@@ -30,6 +34,7 @@ public class JdbcExpenseRepository implements ExpenseRepository {
             ps.setString(5, expense.getDescription());
             ps.setDate(6, Date.valueOf(expense.getCreatedAt()));
 
+            log.info("Saving expense: {}", expense.getId());
             ps.executeUpdate();
             return expense;
         }
