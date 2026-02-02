@@ -8,8 +8,8 @@ import org.harisw.expensetracker.web.dto.ExpenseResponseDTO;
 public class ExpenseMapper {
 
     public static Expense toEntity(CreateExpenseRequestDTO dto) {
-        return Expense.withDefaults(dto.userId, new Money(dto.amount),
-                dto.categoryId, dto.description);
+        return Expense.create(dto.userId, new Money(dto.amount),
+                dto.categoryId, dto.description, dto.createdAt);
     }
 
     public static ExpenseResponseDTO toResponse(Expense e) {
@@ -19,6 +19,7 @@ public class ExpenseMapper {
         dto.amount = e.getAmount().getAmount();
         dto.description = e.getDescription();
         dto.categoryId = e.getCategoryId();
+        dto.createdAt = e.getCreatedAt();
         return dto;
     }
 }

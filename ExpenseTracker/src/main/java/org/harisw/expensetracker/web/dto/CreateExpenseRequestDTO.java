@@ -1,13 +1,15 @@
 package org.harisw.expensetracker.web.dto;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class CreateExpenseRequestDTO {
-    public UUID userId;
+    public Long userId;
     public BigDecimal amount;
     public String description;
-    public LocalDate createdAt;
+    public Instant createdAt;
     public UUID categoryId;
 }

@@ -1,17 +1,17 @@
 package org.harisw.expensetracker.domain.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 
 public class Expense {
-    private final UUID id;
-    private final UUID userId;
+    private final Long id;
+    private final Long userId;
     private Money amount;
-    private LocalDate createdAt;
+    private Instant createdAt;
     private String description;
     private final UUID categoryId;
 
-    public Expense(UUID id, UUID userId, Money amount, UUID categoryId, String description, LocalDate createdAt) {
+    public Expense(Long id, Long userId, Money amount, UUID categoryId, String description, Instant createdAt) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
@@ -20,11 +20,11 @@ public class Expense {
         this.createdAt = createdAt;
     }
 
-    public static Expense withDefaults(UUID userId, Money amount, UUID categoryId, String description) {
-        return new Expense(UUID.randomUUID(), userId, amount, categoryId, description, LocalDate.now());
+    public static Expense create(Long userId, Money amount, UUID categoryId, String description, Instant createdAt) {
+        return new Expense(null, userId, amount, categoryId, description, createdAt);
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -42,11 +42,11 @@ public class Expense {
         this.amount = newAmount;
     }
 
-    public LocalDate getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -61,18 +61,16 @@ public class Expense {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Expense{");
-        sb.append("id=").append(id);
-        sb.append(", amount=").append(amount);
-        sb.append(", time=").append(createdAt);
-        sb.append(", description=").append(description);
-        sb.append(", category=").append(categoryId);
-        sb.append('}');
-        return sb.toString();
+        return "Expense{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", time=" + createdAt.toString() +
+                ", description=" + description +
+                ", category=" + categoryId +
+                '}';
     }
 
-    public UUID getUserId() {
+    public Long getUserId() {
         return userId;
     }
 

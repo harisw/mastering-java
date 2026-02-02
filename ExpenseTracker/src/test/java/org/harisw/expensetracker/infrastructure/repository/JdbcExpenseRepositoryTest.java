@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -44,11 +45,11 @@ public class JdbcExpenseRepositoryTest {
 
             stmt.execute(
                     "CREATE TABLE IF NOT EXISTS expenses (" +
-                            "id UUID PRIMARY KEY, " +
-                            "user_id UUID NOT NULL, " +
-                            "amount NUMERIC(12,2) NOT NULL, " +
+                            "id BIGINT PRIMARY KEY, " +
+                            "user_id BIGINT NOT NULL, " +
+                            "amount NUMERIC NOT NULL, " +
                             "category_id UUID NOT NULL, " +
-                            "created_at DATE NOT NULL, " +
+                            "created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                             "description TEXT)"
             );
 
@@ -58,7 +59,8 @@ public class JdbcExpenseRepositoryTest {
 
     @Test
     public void save_shouldPersistExpense() throws SQLException {
-        UUID userId = UUID.randomUUID();
+        Random rand = new Random();
+        Long userId = rand.nextLong();
         UUID categoryId = UUID.randomUUID();
 
         Money amount = new Money(new BigDecimal("30.00"));
@@ -78,8 +80,9 @@ public class JdbcExpenseRepositoryTest {
 
     @Test
     public void findByUserId_shouldReturnOnlyThatUsersExpenses() throws SQLException {
-        UUID user1 = UUID.randomUUID();
-        UUID user2 = UUID.randomUUID();
+        Random rand = new Random();
+        Long user1 = rand.nextLong();
+        Long user2 = rand.nextLong();
         UUID categoryId = UUID.randomUUID();
 
         expenseRepository.save(Expense.withDefaults(user1, new Money(new BigDecimal("10.00")), categoryId, "Coffee"));

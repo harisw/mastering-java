@@ -5,12 +5,19 @@
 package org.harisw.expensetracker;
 
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
+import org.harisw.expensetracker.config.JacksonConfig;
 import org.harisw.expensetracker.domain.repository.ExpenseRepository;
 import org.harisw.expensetracker.domain.service.ExpenseService;
+import org.harisw.expensetracker.infrastructure.db.DataSourceFactory;
+import org.harisw.expensetracker.infrastructure.db.FlywayMigrator;
 import org.harisw.expensetracker.infrastructure.repository.JdbcExpenseRepository;
 import org.harisw.expensetracker.web.ExpenseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  *
@@ -19,13 +26,20 @@ import org.slf4j.LoggerFactory;
 public class ExpenseTracker {
     private static final Logger log = LoggerFactory.getLogger(ExpenseTracker.class);
 
-    public static void main(String[] args) {
+    static void main(String[] args) throws SQLException {
         log.info("Starting ExpenseTracker app");
-        ExpenseRepository repository = new JdbcExpenseRepository();
+        DataSource dataSource = DataSourceFactory.getDataSource();
+        FlywayMigrator.migrate(dataSource);
+
+        ExpenseRepository repository = new JdbcExpenseRepository(dataSource);
 
         ExpenseService service = new ExpenseService(repository);
 
-        Javalin app = Javalin.create().start(7000);
+        JavalinJackson javalinJackson = new JavalinJackson(JacksonConfig.objectMapper(), true);
+
+        Javalin app = Javalin.create(config -> {
+            config.jsonMapper(javalinJackson);
+        }).start(7000);
 
         ExpenseController.register(app, service);
     }

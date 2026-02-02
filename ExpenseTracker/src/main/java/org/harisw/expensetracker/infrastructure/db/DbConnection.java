@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+//MAYBE DELETE SOON, UNNECESSARY
 public class DbConnection {
     private static final Logger log = LoggerFactory.getLogger(DbConnection.class);
 
