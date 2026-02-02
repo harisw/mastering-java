@@ -51,7 +51,7 @@ public class JdbcExpenseRepository implements ExpenseRepository {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     UUID id = (UUID) rs.getObject("id");
-                    UUID userId = (UUID) rs.getObject("userId");
+                    UUID userId = (UUID) rs.getObject("user_id");
                     BigDecimal amount = rs.getBigDecimal("amount");
                     UUID categoryId = (UUID) rs.getObject("category_id");
                     LocalDate date = rs.getDate("created_at").toLocalDate();
