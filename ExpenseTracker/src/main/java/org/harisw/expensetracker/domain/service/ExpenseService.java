@@ -1,13 +1,10 @@
 package org.harisw.expensetracker.domain.service;
 
+import org.harisw.expensetracker.domain.model.Expense;
+import org.harisw.expensetracker.domain.repository.ExpenseRepository;
+
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
-
-import org.harisw.expensetracker.domain.model.Expense;
-import org.harisw.expensetracker.domain.model.User;
-import org.harisw.expensetracker.domain.repository.ExpenseRepository;
-import org.harisw.expensetracker.domain.repository.UserRepository;
 
 public class ExpenseService {
     //    private final UserRepository userRepository;

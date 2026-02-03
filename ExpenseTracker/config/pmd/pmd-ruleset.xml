@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<ruleset name="CI-safe PMD ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+           http://pmd.sourceforge.net/ruleset/2.0.0
+           https://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>
+        Minimal PMD ruleset suitable for CI.
+        Focuses on real bugs and dead code.
+    </description>
+
+    <!-- ========================= -->
+    <!-- 🧠 Error-prone (important) -->
+    <!-- ========================= -->
+
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock"/>
+    <rule ref="category/java/errorprone.xml/NullAssignment"/>
+
+    <!-- ========================= -->
+    <!-- 🧹 Best practices -->
+    <!-- ========================= -->
+
+    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateField"/>
+
+    <!-- ========================= -->
+    <!-- 🧼 Code style (safe ones) -->
+    <!-- ========================= -->
+
+    <rule ref="category/java/codestyle.xml/UnnecessaryImport"/>
+    <rule ref="category/java/codestyle.xml/UnnecessaryModifier"/>
+
+</ruleset>

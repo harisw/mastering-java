@@ -6,8 +6,6 @@ import org.harisw.expensetracker.config.AppProperties;
 import org.harisw.expensetracker.config.EnvConfig;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataSourceFactory {
