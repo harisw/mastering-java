@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -45,12 +46,12 @@ public class JdbcExpenseRepositoryTest {
 
             stmt.execute(
                     "CREATE TABLE IF NOT EXISTS expenses (" +
-                            "id BIGINT PRIMARY KEY, " +
+                            "id BIGINT GENERATED ALWAYS AS IDENTITY, PRIMARY KEY(id), " +
                             "user_id BIGINT NOT NULL, " +
                             "amount NUMERIC NOT NULL, " +
                             "category_id UUID NOT NULL, " +
                             "created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                            "description TEXT)"
+                            "description TEXT NOT NULL)"
             );
 
             stmt.execute("DELETE FROM expenses");
@@ -64,11 +65,12 @@ public class JdbcExpenseRepositoryTest {
         UUID categoryId = UUID.randomUUID();
 
         Money amount = new Money(new BigDecimal("30.00"));
-        Expense expense = Expense.withDefaults(
+        Expense expense = Expense.create(
                 userId,
                 amount,
                 categoryId,
-                "Dinner"
+                "Dinner",
+                Instant.now()
         );
         expenseRepository.save(expense);
 
@@ -85,11 +87,14 @@ public class JdbcExpenseRepositoryTest {
         Long user2 = rand.nextLong();
         UUID categoryId = UUID.randomUUID();
 
-        expenseRepository.save(Expense.withDefaults(user1, new Money(new BigDecimal("10.00")), categoryId, "Coffee"));
+        expenseRepository.save(Expense.create(user1, new Money(new BigDecimal("10.00")), categoryId, "Coffee",
+                Instant.now()));
 
-        expenseRepository.save(Expense.withDefaults(user2, new Money(new BigDecimal("20.00")), categoryId, "Taxi"));
+        expenseRepository.save(Expense.create(user2, new Money(new BigDecimal("20.00")), categoryId, "Taxi",
+                Instant.now()));
 
-        expenseRepository.save(Expense.withDefaults(user1, new Money(new BigDecimal("15.00")), categoryId, "Snack"));
+        expenseRepository.save(Expense.create(user1, new Money(new BigDecimal("15.00")), categoryId, "Snack",
+                Instant.now()));
 
         List<Expense> user1Expenses = expenseRepository.findByUserId(user1);
 
