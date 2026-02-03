@@ -2,32 +2,23 @@ package org.harisw.expensetracker.infrastructure.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.harisw.expensetracker.config.AppProperties;
-import org.harisw.expensetracker.config.EnvConfig;
+import org.harisw.expensetracker.config.DbConfig;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
 public class DataSourceFactory {
 
-    private static HikariDataSource dataSource;
+    public static DataSource create(DbConfig config) throws SQLException {
+        HikariConfig hikari = new HikariConfig();
 
-    public static DataSource getDataSource() throws SQLException {
-        if (dataSource == null) {
-            HikariConfig config = new HikariConfig();
+        hikari.setJdbcUrl(config.jdbcUrl());
+        hikari.setUsername(config.user());
+        hikari.setPassword(config.password());
 
-            config.setJdbcUrl(EnvConfig.get("DB_URL", AppProperties.required("DB_URL")));
-            config.setUsername(EnvConfig.get("DB_USER", AppProperties.required("DB_USER")));
-            config.setPassword(EnvConfig.get("DB_PASSWORD", AppProperties.required("DB_PASSWORD")));
-
-            config.setMaximumPoolSize(
-                    Integer.parseInt(EnvConfig.get("DB_POOL_MAX", "10"))
-            );
-            config.setMinimumIdle(
-                    Integer.parseInt(EnvConfig.get("DB_POOL_MIN_IDLE", "2"))
-            );
-            dataSource = new HikariDataSource(config);
-        }
-        return dataSource;
+        hikari.setMaximumPoolSize(config.maxPoolSize());
+        hikari.setMinimumIdle(config.minPoolIdle());
+        return new HikariDataSource(hikari);
     }
+
 }

@@ -6,6 +6,7 @@ package org.harisw.expensetracker;
 
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
+import org.harisw.expensetracker.config.DbConfig;
 import org.harisw.expensetracker.config.JacksonConfig;
 import org.harisw.expensetracker.domain.repository.ExpenseRepository;
 import org.harisw.expensetracker.domain.service.ExpenseService;
@@ -28,7 +29,9 @@ public class ExpenseTracker {
 
     static void main(String[] args) throws SQLException {
         log.info("Starting ExpenseTracker app");
-        DataSource dataSource = DataSourceFactory.getDataSource();
+
+        DbConfig dbConfig = new DbConfig();
+        DataSource dataSource = DataSourceFactory.create(dbConfig);
         FlywayMigrator.migrate(dataSource);
 
         ExpenseRepository repository = new JdbcExpenseRepository(dataSource);

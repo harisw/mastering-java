@@ -1,14 +1,17 @@
 package org.harisw.expensetracker.infrastructure.repository;
 
+import org.harisw.expensetracker.config.DbConfig;
 import org.harisw.expensetracker.domain.model.Expense;
 import org.harisw.expensetracker.domain.model.Money;
 import org.harisw.expensetracker.domain.repository.ExpenseRepository;
+import org.harisw.expensetracker.infrastructure.db.DataSourceFactory;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,11 +37,14 @@ public class JdbcExpenseRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-
-        dataSource.setUrl(postgres.getJdbcUrl());
-        dataSource.setUser(postgres.getUsername());
-        dataSource.setPassword(postgres.getPassword());
+        DbConfig testConfig = new DbConfig(
+                postgres.getJdbcUrl(),
+                postgres.getUsername(),
+                postgres.getPassword(),
+                5,
+                2
+        );
+        DataSource dataSource = DataSourceFactory.create(testConfig);
 
         expenseRepository = new JdbcExpenseRepository(dataSource);
         try (Connection conn = dataSource.getConnection();

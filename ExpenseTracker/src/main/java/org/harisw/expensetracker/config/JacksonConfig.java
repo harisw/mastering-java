@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JacksonConfig {
-    private static final ObjectMapper OBJECT_MAPPER = create();
-
     private JacksonConfig() {
 
     }
@@ -19,6 +17,6 @@ public class JacksonConfig {
     }
 
     public static ObjectMapper objectMapper() {
-        return OBJECT_MAPPER;
+        return create();
     }
 }

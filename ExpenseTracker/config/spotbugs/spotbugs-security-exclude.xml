@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<FindBugsFilter>
+    <Match>
+        <Package name="org.harisw.expensetracker.web.dto.*"/>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    </Match>
+</FindBugsFilter>
