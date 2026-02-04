@@ -15,6 +15,7 @@ public final class ExpenseMapper {
         jpa.setAmount(e.amount().amount());
         jpa.setCategory(e.category());
         jpa.setDate(e.date());
+        jpa.setCreatedAt(e.createdAt());
         return jpa;
     }
 
@@ -22,10 +23,11 @@ public final class ExpenseMapper {
         return new Expense(
                 e.getId(),
                 e.getPublicId(),
+                e.getCategory(),
                 e.getDescription(),
                 new Money(e.getAmount()),
-                e.getCategory(),
-                e.getDate()
+                e.getDate(),
+                e.getCreatedAt()
         );
     }
 }

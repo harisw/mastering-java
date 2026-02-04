@@ -12,7 +12,7 @@ public interface ExpenseRepository {
 
     List<Expense> findAll();
 
-//    void deleteByPublicId(UUID publicId);
+    void deleteByPublicId(UUID publicId);
 
 //    List<Expense> findByDateRange(LocalDate from, LocalDate to);
 }

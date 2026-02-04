@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: spring-expense-tracker
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/expense
+    username: expense
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true

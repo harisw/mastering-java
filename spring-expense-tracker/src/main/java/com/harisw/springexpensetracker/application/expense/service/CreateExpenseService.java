@@ -1,6 +1,6 @@
-package com.harisw.springexpensetracker.application.expense;
+package com.harisw.springexpensetracker.application.expense.service;
 
-import com.harisw.springexpensetracker.application.expense.dto.CreateExpenseDTO;
+import com.harisw.springexpensetracker.application.expense.dto.command.CreateExpenseCommand;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
@@ -19,14 +19,14 @@ public class CreateExpenseService {
         this.repository = repository;
     }
 
-    public Expense create(CreateExpenseDTO dto) {
+    public Expense create(CreateExpenseCommand cmd) {
         Expense expense = new Expense(
                 null,
                 UUID.randomUUID(),
-                dto.category(),
-                dto.description(),
-                new Money(dto.amount()),
-                dto.date(),
+                cmd.category(),
+                cmd.description(),
+                new Money(cmd.amount()),
+                cmd.date(),
                 Instant.now()
         );
 
