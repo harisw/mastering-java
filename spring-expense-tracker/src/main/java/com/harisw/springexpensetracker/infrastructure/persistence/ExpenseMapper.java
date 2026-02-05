@@ -4,7 +4,8 @@ import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 
 public final class ExpenseMapper {
-    private ExpenseMapper() {}
+    private ExpenseMapper() {
+    }
 
     public static ExpenseJpaEntity toEntity(Expense e) {
         ExpenseJpaEntity jpa = new ExpenseJpaEntity();
@@ -19,14 +20,7 @@ public final class ExpenseMapper {
     }
 
     public static Expense toDomain(ExpenseJpaEntity e) {
-        return new Expense(
-                e.getId(),
-                e.getPublicId(),
-                e.getCategory(),
-                e.getDescription(),
-                new Money(e.getAmount()),
-                e.getDate(),
-                e.getCreatedAt()
-        );
+        return new Expense(e.getId(), e.getPublicId(), e.getCategory(), e.getDescription(), new Money(e.getAmount()),
+                e.getDate(), e.getCreatedAt());
     }
 }

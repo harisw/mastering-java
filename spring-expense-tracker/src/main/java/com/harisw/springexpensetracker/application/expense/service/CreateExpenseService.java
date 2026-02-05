@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
+
+/**
+ *
+ */
 @Service
 @Transactional
 public class CreateExpenseService {
@@ -20,15 +24,8 @@ public class CreateExpenseService {
     }
 
     public Expense create(CreateExpenseCommand cmd) {
-        Expense expense = new Expense(
-                null,
-                UUID.randomUUID(),
-                cmd.category(),
-                cmd.description(),
-                new Money(cmd.amount()),
-                cmd.date(),
-                Instant.now()
-        );
+        Expense expense = new Expense(null, UUID.randomUUID(), cmd.category(), cmd.description(),
+                new Money(cmd.amount()), cmd.date(), Instant.now());
 
         return repository.save(expense);
     }

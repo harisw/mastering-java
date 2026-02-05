@@ -37,22 +37,11 @@ class CreateExpenseServiceTest {
     @Test
     void create_shouldReturnSavedExpense() {
         // given
-        CreateExpenseCommand command = new CreateExpenseCommand(
-                ExpenseCategory.FOOD,
-                "Lunch at restaurant",
-                new BigDecimal("25.50"),
-                LocalDate.of(2024, 1, 15)
-        );
+        CreateExpenseCommand command = new CreateExpenseCommand(ExpenseCategory.FOOD, "Lunch at restaurant",
+                new BigDecimal("25.50"), LocalDate.of(2024, 1, 15));
 
-        Expense savedExpense = new Expense(
-                1L,
-                UUID.randomUUID(),
-                ExpenseCategory.FOOD,
-                "Lunch at restaurant",
-                new Money(new BigDecimal("25.50")),
-                LocalDate.of(2024, 1, 15),
-                Instant.now()
-        );
+        Expense savedExpense = new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch at restaurant",
+                new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
 
         when(repository.save(any(Expense.class))).thenReturn(savedExpense);
 
@@ -66,12 +55,8 @@ class CreateExpenseServiceTest {
     @Test
     void create_shouldPassCorrectExpenseToRepository() {
         // given
-        CreateExpenseCommand command = new CreateExpenseCommand(
-                ExpenseCategory.TRANSPORT,
-                "Bus ticket",
-                new BigDecimal("2.00"),
-                LocalDate.of(2024, 2, 20)
-        );
+        CreateExpenseCommand command = new CreateExpenseCommand(ExpenseCategory.TRANSPORT, "Bus ticket",
+                new BigDecimal("2.00"), LocalDate.of(2024, 2, 20));
 
         // when
         service.create(command);
@@ -93,12 +78,8 @@ class CreateExpenseServiceTest {
     @Test
     void create_shouldGenerateUniquePublicId() {
         // given
-        CreateExpenseCommand command = new CreateExpenseCommand(
-                ExpenseCategory.ENTERTAINMENT,
-                "Movie ticket",
-                new BigDecimal("15.00"),
-                LocalDate.now()
-        );
+        CreateExpenseCommand command = new CreateExpenseCommand(ExpenseCategory.ENTERTAINMENT, "Movie ticket",
+                new BigDecimal("15.00"), LocalDate.now());
 
         // when
         service.create(command);
@@ -117,12 +98,8 @@ class CreateExpenseServiceTest {
         // given
         Instant before = Instant.now();
 
-        CreateExpenseCommand command = new CreateExpenseCommand(
-                ExpenseCategory.UTILITY,
-                "Electric bill",
-                new BigDecimal("100.00"),
-                LocalDate.now()
-        );
+        CreateExpenseCommand command = new CreateExpenseCommand(ExpenseCategory.UTILITY, "Electric bill",
+                new BigDecimal("100.00"), LocalDate.now());
 
         // when
         service.create(command);

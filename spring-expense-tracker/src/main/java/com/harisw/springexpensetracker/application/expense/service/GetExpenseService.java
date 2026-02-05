@@ -19,8 +19,7 @@ public class GetExpenseService {
     }
 
     public Expense get(UUID publicId) {
-        return repository.findByPublicId(publicId)
-                .orElseThrow(() -> new ExpenseNotFoundException(publicId));
+        return repository.findByPublicId(publicId).orElseThrow(() -> new ExpenseNotFoundException(publicId));
     }
 
     public List<Expense> getAll() {

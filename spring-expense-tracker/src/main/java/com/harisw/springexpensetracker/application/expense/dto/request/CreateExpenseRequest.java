@@ -7,12 +7,17 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record CreateExpenseRequest(
-        @NotNull ExpenseCategory category,
-        @NotNull String description,
-        @NotNull BigDecimal amount,
-        @NotNull LocalDate date
-) {
+/**
+ * @param category
+ * @param description
+ * @param amount
+ * @param date
+ */
+public record CreateExpenseRequest(@NotNull ExpenseCategory category, @NotNull String description,
+                                   @NotNull BigDecimal amount, @NotNull LocalDate date) {
+    /**
+     * @return CreateExpenseCommand
+     */
     public CreateExpenseCommand toCommand() {
         return new CreateExpenseCommand(category, description, amount, date);
     }

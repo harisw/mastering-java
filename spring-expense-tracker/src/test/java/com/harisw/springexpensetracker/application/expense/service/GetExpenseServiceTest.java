@@ -19,7 +19,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetExpenseServiceTest {
@@ -38,15 +39,8 @@ class GetExpenseServiceTest {
     void get_shouldReturnExpenseWhenFound() {
         // given
         UUID publicId = UUID.randomUUID();
-        Expense expense = new Expense(
-                1L,
-                publicId,
-                ExpenseCategory.FOOD,
-                "Lunch",
-                new Money(new BigDecimal("20.00")),
-                LocalDate.now(),
-                Instant.now()
-        );
+        Expense expense = new Expense(1L, publicId, ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
+                LocalDate.now(), Instant.now());
 
         when(repository.findByPublicId(publicId)).thenReturn(Optional.of(expense));
 
@@ -65,10 +59,7 @@ class GetExpenseServiceTest {
         when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
 
         // when & then
-        ExpenseNotFoundException exception = assertThrows(
-                ExpenseNotFoundException.class,
-                () -> service.get(publicId)
-        );
+        ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class, () -> service.get(publicId));
 
         assertEquals(publicId, exception.getPublicId());
     }
@@ -77,11 +68,10 @@ class GetExpenseServiceTest {
     void getAll_shouldReturnAllExpenses() {
         // given
         List<Expense> expenses = List.of(
-                new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch",
-                        new Money(new BigDecimal("20.00")), LocalDate.now(), Instant.now()),
-                new Expense(2L, UUID.randomUUID(), ExpenseCategory.TRANSPORT, "Bus",
-                        new Money(new BigDecimal("5.00")), LocalDate.now(), Instant.now())
-        );
+                new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
+                        LocalDate.now(), Instant.now()),
+                new Expense(2L, UUID.randomUUID(), ExpenseCategory.TRANSPORT, "Bus", new Money(new BigDecimal("5.00")),
+                        LocalDate.now(), Instant.now()));
 
         when(repository.findAll()).thenReturn(expenses);
 

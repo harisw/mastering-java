@@ -19,7 +19,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,23 +43,11 @@ class UpdateExpenseServiceTest {
         UUID publicId = UUID.randomUUID();
         Instant createdAt = Instant.now().minusSeconds(3600);
 
-        Expense existing = new Expense(
-                1L,
-                publicId,
-                ExpenseCategory.FOOD,
-                "Old description",
-                new Money(new BigDecimal("10.00")),
-                LocalDate.of(2024, 1, 1),
-                createdAt
-        );
+        Expense existing = new Expense(1L, publicId, ExpenseCategory.FOOD, "Old description",
+                new Money(new BigDecimal("10.00")), LocalDate.of(2024, 1, 1), createdAt);
 
-        UpdateExpenseCommand command = new UpdateExpenseCommand(
-                publicId,
-                ExpenseCategory.TRANSPORT,
-                "New description",
-                new BigDecimal("25.00"),
-                LocalDate.of(2024, 2, 15)
-        );
+        UpdateExpenseCommand command = new UpdateExpenseCommand(publicId, ExpenseCategory.TRANSPORT, "New description",
+                new BigDecimal("25.00"), LocalDate.of(2024, 2, 15));
 
         when(repository.findByPublicId(publicId)).thenReturn(Optional.of(existing));
         when(repository.save(any(Expense.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -79,23 +68,11 @@ class UpdateExpenseServiceTest {
         UUID publicId = UUID.randomUUID();
         Instant createdAt = Instant.now().minusSeconds(3600);
 
-        Expense existing = new Expense(
-                99L,
-                publicId,
-                ExpenseCategory.FOOD,
-                "Description",
-                new Money(new BigDecimal("10.00")),
-                LocalDate.now(),
-                createdAt
-        );
+        Expense existing = new Expense(99L, publicId, ExpenseCategory.FOOD, "Description",
+                new Money(new BigDecimal("10.00")), LocalDate.now(), createdAt);
 
-        UpdateExpenseCommand command = new UpdateExpenseCommand(
-                publicId,
-                ExpenseCategory.OTHER,
-                "Updated",
-                new BigDecimal("50.00"),
-                LocalDate.now()
-        );
+        UpdateExpenseCommand command = new UpdateExpenseCommand(publicId, ExpenseCategory.OTHER, "Updated",
+                new BigDecimal("50.00"), LocalDate.now());
 
         when(repository.findByPublicId(publicId)).thenReturn(Optional.of(existing));
 
@@ -116,21 +93,14 @@ class UpdateExpenseServiceTest {
     void update_shouldThrowExpenseNotFoundExceptionWhenNotFound() {
         // given
         UUID publicId = UUID.randomUUID();
-        UpdateExpenseCommand command = new UpdateExpenseCommand(
-                publicId,
-                ExpenseCategory.FOOD,
-                "Description",
-                new BigDecimal("10.00"),
-                LocalDate.now()
-        );
+        UpdateExpenseCommand command = new UpdateExpenseCommand(publicId, ExpenseCategory.FOOD, "Description",
+                new BigDecimal("10.00"), LocalDate.now());
 
         when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
 
         // when & then
-        ExpenseNotFoundException exception = assertThrows(
-                ExpenseNotFoundException.class,
-                () -> service.update(command)
-        );
+        ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class,
+                () -> service.update(command));
 
         assertEquals(publicId, exception.getPublicId());
         verify(repository, never()).save(any());

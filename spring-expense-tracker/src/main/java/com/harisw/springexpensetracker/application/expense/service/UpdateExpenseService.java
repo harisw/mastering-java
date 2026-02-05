@@ -20,15 +20,8 @@ public class UpdateExpenseService {
     public Expense update(UpdateExpenseCommand cmd) {
         Expense existing = repository.findByPublicId(cmd.publicId())
                 .orElseThrow(() -> new ExpenseNotFoundException(cmd.publicId()));
-        Expense updated = new Expense(
-                existing.id(),
-                existing.publicId(),
-                cmd.category(),
-                cmd.description(),
-                new Money(cmd.amount()),
-                cmd.date(),
-                existing.createdAt()
-        );
+        Expense updated = new Expense(existing.id(), existing.publicId(), cmd.category(), cmd.description(),
+                new Money(cmd.amount()), cmd.date(), existing.createdAt());
 
         return repository.save(updated);
     }

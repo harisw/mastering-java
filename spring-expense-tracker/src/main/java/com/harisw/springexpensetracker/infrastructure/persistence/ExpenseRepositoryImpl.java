@@ -19,23 +19,17 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
 
     @Override
     public Expense save(Expense expense) {
-        return ExpenseMapper.toDomain(
-                jpa.save(ExpenseMapper.toEntity(expense))
-        );
+        return ExpenseMapper.toDomain(jpa.save(ExpenseMapper.toEntity(expense)));
     }
 
     @Override
     public Optional<Expense> findByPublicId(UUID publicId) {
-        return jpa.findByPublicId(publicId)
-                .map(ExpenseMapper::toDomain);
+        return jpa.findByPublicId(publicId).map(ExpenseMapper::toDomain);
     }
 
     @Override
     public List<Expense> findAll() {
-        return jpa.findAll()
-                .stream()
-                .map(ExpenseMapper::toDomain)
-                .toList();   // Java 16+
+        return jpa.findAll().stream().map(ExpenseMapper::toDomain).toList(); // Java 16+
     }
 
     @Override
@@ -43,11 +37,11 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
         jpa.deleteByPublicId(publicId);
     }
 
-//    @Override
-//    public List<Expense> findByDateRange(LocalDate from, LocalDate to) {
-//        return jpa.findByDateBetween(from, to)
-//                .stream()
-//                .map(ExpenseMapper::toDomain)
-//                .toList();
-//    }
+    // @Override
+    // public List<Expense> findByDateRange(LocalDate from, LocalDate to) {
+    // return jpa.findByDateBetween(from, to)
+    // .stream()
+    // .map(ExpenseMapper::toDomain)
+    // .toList();
+    // }
 }

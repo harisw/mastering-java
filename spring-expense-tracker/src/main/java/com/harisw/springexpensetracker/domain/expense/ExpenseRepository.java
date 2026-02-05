@@ -1,6 +1,5 @@
 package com.harisw.springexpensetracker.domain.expense;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,5 +13,5 @@ public interface ExpenseRepository {
 
     void deleteByPublicId(UUID publicId);
 
-//    List<Expense> findByDateRange(LocalDate from, LocalDate to);
+    // List<Expense> findByDateRange(LocalDate from, LocalDate to);
 }

@@ -63,20 +63,29 @@ class ExpenseRepositoryIntegrationTest {
      * TESTCONTAINERS SETUP
      * =========================================================================
      *
-     * @Container - Marks this as a container managed by Testcontainers
-     * static     - Shared across all tests in this class (faster)
+     * @Container - Marks this as a container managed by Testcontainers static -
+     * Shared across all tests in this class (faster)
      *
-     * The container starts a real PostgreSQL database in Docker.
-     * Testcontainers automatically:
-     *   1. Pulls the postgres:15 image (if not cached)
-     *   2. Starts the container before tests
-     *   3. Stops and removes the container after tests
+     * The container starts a real PostgreSQL database in Docker. Testcontainers
+     * automatically: 1. Pulls the postgres:15 image (if not cached) 2. Starts the
+     * container before tests 3. Stops and removes the container after tests
      */
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15").withDatabaseName("testdb")
+            .withUsername("test").withPassword("test");
+    /*
+     * =========================================================================
+     * DEPENDENCY INJECTION
+     * =========================================================================
+     *
+     * @Autowired injects the real beans from Spring context. - ExpenseRepository:
+     * Our domain repository (ExpenseRepositoryImpl) - ExpenseJpaRepository: Spring
+     * Data JPA repository (for test setup)
+     */
+    @Autowired
+    private ExpenseRepository repository; // The one we're testing
+    @Autowired
+    private ExpenseJpaRepository jpaRepository; // For test data setup
 
     /*
      * =========================================================================
@@ -85,10 +94,10 @@ class ExpenseRepositoryIntegrationTest {
      *
      * @DynamicPropertySource - Injects properties at runtime
      *
-     * Why? Because Testcontainers assigns a RANDOM port to avoid conflicts.
-     * We can't hardcode the port in application.properties.
-     * This method runs BEFORE Spring context starts and provides the actual
-     * connection details from the running container.
+     * Why? Because Testcontainers assigns a RANDOM port to avoid conflicts. We
+     * can't hardcode the port in application.properties. This method runs BEFORE
+     * Spring context starts and provides the actual connection details from the
+     * running container.
      */
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -97,21 +106,6 @@ class ExpenseRepositoryIntegrationTest {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
     }
-
-    /*
-     * =========================================================================
-     * DEPENDENCY INJECTION
-     * =========================================================================
-     *
-     * @Autowired injects the real beans from Spring context.
-     * - ExpenseRepository: Our domain repository (ExpenseRepositoryImpl)
-     * - ExpenseJpaRepository: Spring Data JPA repository (for test setup)
-     */
-    @Autowired
-    private ExpenseRepository repository;  // The one we're testing
-
-    @Autowired
-    private ExpenseJpaRepository jpaRepository;  // For test data setup
 
     @BeforeEach
     void setUp() {
@@ -128,15 +122,8 @@ class ExpenseRepositoryIntegrationTest {
     @Test
     void save_shouldPersistExpenseAndGenerateId() {
         // given - Create a domain expense (id is null, will be generated)
-        Expense expense = new Expense(
-                null,
-                UUID.randomUUID(),
-                ExpenseCategory.FOOD,
-                "Lunch at restaurant",
-                new Money(new BigDecimal("25.50")),
-                LocalDate.of(2024, 1, 15),
-                Instant.now()
-        );
+        Expense expense = new Expense(null, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch at restaurant",
+                new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
 
         // when - Save through our repository
         Expense saved = repository.save(expense);
@@ -252,15 +239,8 @@ class ExpenseRepositoryIntegrationTest {
         LocalDate date = LocalDate.of(2024, 6, 15);
         Instant createdAt = Instant.parse("2024-06-15T10:30:00Z");
 
-        Expense original = new Expense(
-                null,
-                publicId,
-                ExpenseCategory.ENTERTAINMENT,
-                "Concert tickets",
-                new Money(new BigDecimal("150.00")),
-                date,
-                createdAt
-        );
+        Expense original = new Expense(null, publicId, ExpenseCategory.ENTERTAINMENT, "Concert tickets",
+                new Money(new BigDecimal("150.00")), date, createdAt);
 
         // when - Save and retrieve
         Expense saved = repository.save(original);
@@ -279,9 +259,9 @@ class ExpenseRepositoryIntegrationTest {
      * =========================================================================
      * HELPER METHOD
      * =========================================================================
-     * Creates a JPA entity for test setup. Using JPA entity directly
-     * in test setup is fine - it bypasses our repository so we can
-     * test the repository in isolation.
+     * Creates a JPA entity for test setup. Using JPA entity directly in test setup
+     * is fine - it bypasses our repository so we can test the repository in
+     * isolation.
      */
     private ExpenseJpaEntity createEntity(UUID publicId, String description, String amount) {
         ExpenseJpaEntity entity = new ExpenseJpaEntity();

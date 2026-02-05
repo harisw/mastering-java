@@ -17,7 +17,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,15 +38,8 @@ class DeleteExpenseServiceTest {
     void delete_shouldDeleteExpenseWhenExists() {
         // given
         UUID publicId = UUID.randomUUID();
-        Expense expense = new Expense(
-                1L,
-                publicId,
-                ExpenseCategory.FOOD,
-                "Lunch",
-                new Money(new BigDecimal("20.00")),
-                LocalDate.now(),
-                Instant.now()
-        );
+        Expense expense = new Expense(1L, publicId, ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
+                LocalDate.now(), Instant.now());
 
         when(repository.findByPublicId(publicId)).thenReturn(Optional.of(expense));
 
@@ -64,10 +58,8 @@ class DeleteExpenseServiceTest {
         when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
 
         // when & then
-        ExpenseNotFoundException exception = assertThrows(
-                ExpenseNotFoundException.class,
-                () -> service.delete(publicId)
-        );
+        ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class,
+                () -> service.delete(publicId));
 
         assertEquals(publicId, exception.getPublicId());
         verify(repository, never()).deleteByPublicId(any());
