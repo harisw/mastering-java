@@ -7,6 +7,7 @@ import com.harisw.springexpensetracker.application.expense.service.DeleteExpense
 import com.harisw.springexpensetracker.application.expense.service.GetExpenseService;
 import com.harisw.springexpensetracker.application.expense.service.UpdateExpenseService;
 import com.harisw.springexpensetracker.domain.expense.Expense;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +32,13 @@ public class ExpenseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Expense create(@RequestBody CreateExpenseRequest req) {
+    public Expense create(@Valid @RequestBody CreateExpenseRequest req) {
         return create.create(req.toCommand());
     }
 
-    @GetMapping("/{public_id}")
-    public Expense get(@PathVariable UUID public_id) {
-        return get.get(public_id);
+    @GetMapping("/{publicId}")
+    public Expense get(@PathVariable UUID publicId) {
+        return get.get(publicId);
     }
 
     @GetMapping
@@ -45,14 +46,14 @@ public class ExpenseController {
         return get.getAll();
     }
 
-    @PutMapping("/{public_id}")
+    @PutMapping("/{publicId}")
     public Expense update(
-            @PathVariable UUID public_id,
-            @RequestBody CreateExpenseRequest req
+            @PathVariable UUID publicId,
+            @Valid @RequestBody CreateExpenseRequest req
     ) {
         return update.update(
                 new UpdateExpenseCommand(
-                        public_id,
+                        publicId,
                         req.category(),
                         req.description(),
                         req.amount(),
@@ -61,9 +62,9 @@ public class ExpenseController {
         );
     }
 
-    @DeleteMapping("/{public_id}")
+    @DeleteMapping("/{publicId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID public_id) {
-        delete.delete(public_id);
+    public void delete(@PathVariable UUID publicId) {
+        delete.delete(publicId);
     }
 }

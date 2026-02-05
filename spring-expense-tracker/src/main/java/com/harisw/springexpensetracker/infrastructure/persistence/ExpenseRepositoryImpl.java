@@ -1,6 +1,5 @@
 package com.harisw.springexpensetracker.infrastructure.persistence;
 
-import com.harisw.springexpensetracker.application.expense.ExpenseMapper;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
 import org.springframework.stereotype.Repository;

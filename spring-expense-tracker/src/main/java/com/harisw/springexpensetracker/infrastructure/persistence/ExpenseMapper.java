@@ -1,15 +1,14 @@
-package com.harisw.springexpensetracker.application.expense;
+package com.harisw.springexpensetracker.infrastructure.persistence;
 
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
-import com.harisw.springexpensetracker.infrastructure.persistence.ExpenseJpaEntity;
 
 public final class ExpenseMapper {
     private ExpenseMapper() {}
 
     public static ExpenseJpaEntity toEntity(Expense e) {
         ExpenseJpaEntity jpa = new ExpenseJpaEntity();
-        jpa.setId(e.id());                 // null on create → OK
+        jpa.setId(e.id());
         jpa.setPublicId(e.publicId());
         jpa.setDescription(e.description());
         jpa.setAmount(e.amount().amount());

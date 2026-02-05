@@ -3,6 +3,7 @@ package com.harisw.springexpensetracker.application.expense.service;
 import com.harisw.springexpensetracker.application.expense.dto.command.UpdateExpenseCommand;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
+import com.harisw.springexpensetracker.domain.expense.ExpenseNotFoundException;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public class UpdateExpenseService {
 
     public Expense update(UpdateExpenseCommand cmd) {
         Expense existing = repository.findByPublicId(cmd.publicId())
-                .orElseThrow(() -> new IllegalArgumentException("Expense not found"));
+                .orElseThrow(() -> new ExpenseNotFoundException(cmd.publicId()));
         Expense updated = new Expense(
                 existing.id(),
                 existing.publicId(),

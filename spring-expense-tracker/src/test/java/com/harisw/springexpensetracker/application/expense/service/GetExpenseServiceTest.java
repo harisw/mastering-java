@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,20 +22,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DeleteExpenseServiceTest {
+class GetExpenseServiceTest {
 
     @Mock
     private ExpenseRepository repository;
 
-    private DeleteExpenseService service;
+    private GetExpenseService service;
 
     @BeforeEach
     void setUp() {
-        service = new DeleteExpenseService(repository);
+        service = new GetExpenseService(repository);
     }
 
     @Test
-    void delete_shouldDeleteExpenseWhenExists() {
+    void get_shouldReturnExpenseWhenFound() {
         // given
         UUID publicId = UUID.randomUUID();
         Expense expense = new Expense(
@@ -50,15 +51,15 @@ class DeleteExpenseServiceTest {
         when(repository.findByPublicId(publicId)).thenReturn(Optional.of(expense));
 
         // when
-        service.delete(publicId);
+        Expense result = service.get(publicId);
 
         // then
+        assertEquals(expense, result);
         verify(repository).findByPublicId(publicId);
-        verify(repository).deleteByPublicId(publicId);
     }
 
     @Test
-    void delete_shouldThrowExpenseNotFoundExceptionWhenNotExists() {
+    void get_shouldThrowExpenseNotFoundExceptionWhenNotFound() {
         // given
         UUID publicId = UUID.randomUUID();
         when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
@@ -66,10 +67,42 @@ class DeleteExpenseServiceTest {
         // when & then
         ExpenseNotFoundException exception = assertThrows(
                 ExpenseNotFoundException.class,
-                () -> service.delete(publicId)
+                () -> service.get(publicId)
         );
 
         assertEquals(publicId, exception.getPublicId());
-        verify(repository, never()).deleteByPublicId(any());
+    }
+
+    @Test
+    void getAll_shouldReturnAllExpenses() {
+        // given
+        List<Expense> expenses = List.of(
+                new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch",
+                        new Money(new BigDecimal("20.00")), LocalDate.now(), Instant.now()),
+                new Expense(2L, UUID.randomUUID(), ExpenseCategory.TRANSPORT, "Bus",
+                        new Money(new BigDecimal("5.00")), LocalDate.now(), Instant.now())
+        );
+
+        when(repository.findAll()).thenReturn(expenses);
+
+        // when
+        List<Expense> result = service.getAll();
+
+        // then
+        assertEquals(2, result.size());
+        assertEquals(expenses, result);
+        verify(repository).findAll();
+    }
+
+    @Test
+    void getAll_shouldReturnEmptyListWhenNoExpenses() {
+        // given
+        when(repository.findAll()).thenReturn(List.of());
+
+        // when
+        List<Expense> result = service.getAll();
+
+        // then
+        assertTrue(result.isEmpty());
     }
 }
