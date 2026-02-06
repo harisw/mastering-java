@@ -1,6 +1,7 @@
-package com.harisw.springexpensetracker.infrastructure.persistence;
+package com.harisw.springexpensetracker.infrastructure.persistence.expense;
 
 import com.harisw.springexpensetracker.domain.expense.ExpenseCategory;
+import com.harisw.springexpensetracker.infrastructure.persistence.auth.UserJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -22,6 +25,14 @@ public class ExpenseJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id",
+            nullable = false
+    )
+    private UserJpaEntity user;
 
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
@@ -38,6 +49,14 @@ public class ExpenseJpaEntity {
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    public UserJpaEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserJpaEntity user) {
+        this.user = user;
+    }
 
     public ExpenseJpaEntity() {
     }

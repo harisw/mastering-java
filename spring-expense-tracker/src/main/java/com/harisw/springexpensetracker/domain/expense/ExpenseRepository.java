@@ -7,9 +7,11 @@ import java.util.UUID;
 public interface ExpenseRepository {
     Expense save(Expense expense);
 
-    Optional<Expense> findByPublicId(UUID publicId);
+    Optional<Expense> findByPublicIdAndUserId(UUID publicId, Long userId);
 
     List<Expense> findAll();
+
+    List<Expense> findByUserId(Long userId);
 
     void deleteByPublicId(UUID publicId);
 
