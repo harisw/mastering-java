@@ -26,9 +26,9 @@ public class JwtTokenService implements TokenService {
     private final MACVerifier verifier;
 
     public JwtTokenService(
-            @Value("{jwt.secret}") String secret,
-            @Value("{jwt.access-token-expiry}") Integer accessTokenExpiry,
-            @Value("{jwt.refresh-token-expiry}") Integer refreshTokenExpiry
+            @Value("${spring.jwt.secret}") String secret,
+            @Value("${spring.jwt.access-token-expiry}") Integer accessTokenExpiry,
+            @Value("${spring.jwt.refresh-token-expiry}") Integer refreshTokenExpiry
     ) throws JOSEException {
         byte[] secretBytes = Base64.getDecoder().decode(secret);
 

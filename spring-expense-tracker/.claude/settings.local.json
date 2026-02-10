@@ -5,7 +5,9 @@
       "Bash(mvn compile:*)",
       "Bash(mvn checkstyle:check:*)",
       "Bash(mvnw.cmd compile:*)",
-      "Bash(./mvnw compile:*)"
+      "Bash(./mvnw compile:*)",
+      "Bash(docker exec:*)",
+      "Bash(mvn spring-boot:run:*)"
     ]
   }
 }
