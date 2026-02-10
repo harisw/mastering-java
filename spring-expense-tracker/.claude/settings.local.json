@@ -3,7 +3,9 @@
     "allow": [
       "Bash(mvn test:*)",
       "Bash(mvn compile:*)",
-      "Bash(mvn checkstyle:check:*)"
+      "Bash(mvn checkstyle:check:*)",
+      "Bash(mvnw.cmd compile:*)",
+      "Bash(./mvnw compile:*)"
     ]
   }
 }

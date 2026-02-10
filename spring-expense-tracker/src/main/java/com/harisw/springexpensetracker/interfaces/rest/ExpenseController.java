@@ -6,9 +6,11 @@ import com.harisw.springexpensetracker.application.expense.service.CreateExpense
 import com.harisw.springexpensetracker.application.expense.service.DeleteExpenseService;
 import com.harisw.springexpensetracker.application.expense.service.GetExpenseService;
 import com.harisw.springexpensetracker.application.expense.service.UpdateExpenseService;
+import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,13 +42,15 @@ public class ExpenseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Expense create(@Valid @RequestBody CreateExpenseRequest req) {
-        return create.create(req.toCommand());
+    public Expense create(@Valid @RequestBody CreateExpenseRequest req, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return create.create(req.toCommand(), user);
     }
 
     @GetMapping("/{publicId}")
-    public Expense get(@PathVariable UUID publicId) {
-        return get.get(publicId);
+    public Expense get(@PathVariable UUID publicId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return get.get(publicId, user);
     }
 
     @GetMapping
@@ -55,14 +59,17 @@ public class ExpenseController {
     }
 
     @PutMapping("/{publicId}")
-    public Expense update(@PathVariable UUID publicId, @Valid @RequestBody CreateExpenseRequest req) {
+    public Expense update(@PathVariable UUID publicId, @Valid @RequestBody CreateExpenseRequest req,
+                          Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         return update.update(
-                new UpdateExpenseCommand(publicId, req.category(), req.description(), req.amount(), req.date()));
+                new UpdateExpenseCommand(publicId, req.category(), req.description(), req.amount(), req.date()), user);
     }
 
     @DeleteMapping("/{publicId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID publicId) {
-        delete.delete(publicId);
+    public void delete(@PathVariable UUID publicId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        delete.delete(publicId, user);
     }
 }

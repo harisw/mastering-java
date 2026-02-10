@@ -1,5 +1,7 @@
 package com.harisw.springexpensetracker.application.expense.service;
 
+import com.harisw.springexpensetracker.domain.auth.Role;
+import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseCategory;
@@ -28,26 +30,28 @@ class DeleteExpenseServiceTest {
     private ExpenseRepository repository;
 
     private DeleteExpenseService service;
+    private User user;
 
     @BeforeEach
     void setUp() {
         service = new DeleteExpenseService(repository);
+        user = new User(1L, UUID.randomUUID(), "test@example.com", Role.USER, Instant.now());
     }
 
     @Test
     void delete_shouldDeleteExpenseWhenExists() {
         // given
         UUID publicId = UUID.randomUUID();
-        Expense expense = new Expense(1L, publicId, ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
-                LocalDate.now(), Instant.now());
+        Expense expense = new Expense(1L, user.id(), publicId, ExpenseCategory.FOOD, "Lunch",
+                new Money(new BigDecimal("20.00")), LocalDate.now(), Instant.now());
 
-        when(repository.findByPublicId(publicId)).thenReturn(Optional.of(expense));
+        when(repository.findByPublicIdAndUserId(publicId, user.id())).thenReturn(Optional.of(expense));
 
         // when
-        service.delete(publicId);
+        service.delete(publicId, user);
 
         // then
-        verify(repository).findByPublicId(publicId);
+        verify(repository).findByPublicIdAndUserId(publicId, user.id());
         verify(repository).deleteByPublicId(publicId);
     }
 
@@ -55,11 +59,11 @@ class DeleteExpenseServiceTest {
     void delete_shouldThrowExpenseNotFoundExceptionWhenNotExists() {
         // given
         UUID publicId = UUID.randomUUID();
-        when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
+        when(repository.findByPublicIdAndUserId(publicId, user.id())).thenReturn(Optional.empty());
 
         // when & then
         ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class,
-                () -> service.delete(publicId));
+                () -> service.delete(publicId, user));
 
         assertEquals(publicId, exception.getPublicId());
         verify(repository, never()).deleteByPublicId(any());

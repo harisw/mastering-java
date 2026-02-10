@@ -1,5 +1,7 @@
 package com.harisw.springexpensetracker.application.expense.service;
 
+import com.harisw.springexpensetracker.domain.auth.Role;
+import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseCategory;
@@ -29,37 +31,40 @@ class GetExpenseServiceTest {
     private ExpenseRepository repository;
 
     private GetExpenseService service;
+    private User user;
 
     @BeforeEach
     void setUp() {
         service = new GetExpenseService(repository);
+        user = new User(1L, UUID.randomUUID(), "test@example.com", Role.USER, Instant.now());
     }
 
     @Test
     void get_shouldReturnExpenseWhenFound() {
         // given
         UUID publicId = UUID.randomUUID();
-        Expense expense = new Expense(1L, publicId, ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
-                LocalDate.now(), Instant.now());
+        Expense expense = new Expense(1L, user.id(), publicId, ExpenseCategory.FOOD, "Lunch",
+                new Money(new BigDecimal("20.00")), LocalDate.now(), Instant.now());
 
-        when(repository.findByPublicId(publicId)).thenReturn(Optional.of(expense));
+        when(repository.findByPublicIdAndUserId(publicId, user.id())).thenReturn(Optional.of(expense));
 
         // when
-        Expense result = service.get(publicId);
+        Expense result = service.get(publicId, user);
 
         // then
         assertEquals(expense, result);
-        verify(repository).findByPublicId(publicId);
+        verify(repository).findByPublicIdAndUserId(publicId, user.id());
     }
 
     @Test
     void get_shouldThrowExpenseNotFoundExceptionWhenNotFound() {
         // given
         UUID publicId = UUID.randomUUID();
-        when(repository.findByPublicId(publicId)).thenReturn(Optional.empty());
+        when(repository.findByPublicIdAndUserId(publicId, user.id())).thenReturn(Optional.empty());
 
         // when & then
-        ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class, () -> service.get(publicId));
+        ExpenseNotFoundException exception = assertThrows(ExpenseNotFoundException.class,
+                () -> service.get(publicId, user));
 
         assertEquals(publicId, exception.getPublicId());
     }
@@ -68,10 +73,10 @@ class GetExpenseServiceTest {
     void getAll_shouldReturnAllExpenses() {
         // given
         List<Expense> expenses = List.of(
-                new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch", new Money(new BigDecimal("20.00")),
-                        LocalDate.now(), Instant.now()),
-                new Expense(2L, UUID.randomUUID(), ExpenseCategory.TRANSPORT, "Bus", new Money(new BigDecimal("5.00")),
-                        LocalDate.now(), Instant.now()));
+                new Expense(1L, user.id(), UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch",
+                        new Money(new BigDecimal("20.00")), LocalDate.now(), Instant.now()),
+                new Expense(2L, user.id(), UUID.randomUUID(), ExpenseCategory.TRANSPORT, "Bus",
+                        new Money(new BigDecimal("5.00")), LocalDate.now(), Instant.now()));
 
         when(repository.findAll()).thenReturn(expenses);
 

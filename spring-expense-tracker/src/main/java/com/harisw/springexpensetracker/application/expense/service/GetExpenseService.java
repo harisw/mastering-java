@@ -1,5 +1,6 @@
 package com.harisw.springexpensetracker.application.expense.service;
 
+import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseNotFoundException;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
@@ -18,8 +19,9 @@ public class GetExpenseService {
         this.repository = repository;
     }
 
-    public Expense get(UUID publicId) {
-        return repository.findByPublicId(publicId).orElseThrow(() -> new ExpenseNotFoundException(publicId));
+    public Expense get(UUID publicId, User user) {
+        return repository.findByPublicIdAndUserId(publicId, user.id())
+                .orElseThrow(() -> new ExpenseNotFoundException(publicId));
     }
 
     public List<Expense> getAll() {
