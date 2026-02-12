@@ -3,17 +3,12 @@ package com.harisw.springexpensetracker.application.auth.service;
 import com.harisw.springexpensetracker.application.auth.dto.command.AuthCommand;
 import com.harisw.springexpensetracker.application.auth.dto.response.AuthResponse;
 import com.harisw.springexpensetracker.application.auth.port.TokenService;
-import com.harisw.springexpensetracker.domain.auth.Role;
 import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.auth.UserRepository;
-import com.harisw.springexpensetracker.domain.auth.exception.DuplicateEmailException;
 import com.harisw.springexpensetracker.domain.auth.exception.InvalidCredentialsException;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Service
 public class LoginUserService {

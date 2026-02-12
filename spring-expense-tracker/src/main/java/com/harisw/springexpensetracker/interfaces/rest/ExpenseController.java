@@ -8,6 +8,7 @@ import com.harisw.springexpensetracker.application.expense.service.GetExpenseSer
 import com.harisw.springexpensetracker.application.expense.service.UpdateExpenseService;
 import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.expense.Expense;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/expenses")
+@SecurityRequirement(name = "bearerAuth")
 public class ExpenseController {
     private final CreateExpenseService create;
     private final GetExpenseService get;
@@ -54,8 +56,9 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public List<Expense> getAll() {
-        return get.getAll();
+    public List<Expense> getAll(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return get.getAllByUserId(user);
     }
 
     @PutMapping("/{publicId}")

@@ -27,4 +27,8 @@ public class GetExpenseService {
     public List<Expense> getAll() {
         return repository.findAll();
     }
+
+    public List<Expense> getAllByUserId(User user) {
+        return repository.findByUserId(user.id());
+    }
 }

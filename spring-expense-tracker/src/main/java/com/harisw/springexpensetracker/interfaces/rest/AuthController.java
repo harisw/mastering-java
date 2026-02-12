@@ -33,8 +33,8 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthResponse register(@Valid @RequestBody LoginRequest req) throws JOSEException {
-        return register.register(req.toCommand());
+    public AuthResponse login(@Valid @RequestBody LoginRequest req) throws JOSEException {
+        return login.login(req.toCommand());
     }
 
 }
