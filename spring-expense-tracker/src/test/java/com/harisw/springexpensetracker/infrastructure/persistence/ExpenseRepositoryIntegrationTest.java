@@ -1,9 +1,16 @@
 package com.harisw.springexpensetracker.infrastructure.persistence;
 
+import com.harisw.springexpensetracker.domain.auth.AuthProvider;
+import com.harisw.springexpensetracker.domain.auth.Role;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseCategory;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
+import com.harisw.springexpensetracker.infrastructure.persistence.auth.UserJpaEntity;
+import com.harisw.springexpensetracker.infrastructure.persistence.auth.UserJpaRepository;
+import com.harisw.springexpensetracker.infrastructure.persistence.expense.ExpenseJpaEntity;
+import com.harisw.springexpensetracker.infrastructure.persistence.expense.ExpenseJpaRepository;
+import com.harisw.springexpensetracker.infrastructure.persistence.expense.ExpenseRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +93,10 @@ class ExpenseRepositoryIntegrationTest {
     private ExpenseRepository repository; // The one we're testing
     @Autowired
     private ExpenseJpaRepository jpaRepository; // For test data setup
+    @Autowired
+    private UserJpaRepository userJpaRepository; // For creating test users
+
+    private UserJpaEntity testUser;
 
     /*
      * =========================================================================
@@ -111,6 +122,17 @@ class ExpenseRepositoryIntegrationTest {
     void setUp() {
         // Clean database before each test for isolation
         jpaRepository.deleteAll();
+        userJpaRepository.deleteAll();
+
+        // Create a test user that expenses will belong to
+        testUser = new UserJpaEntity();
+        testUser.setPublicId(UUID.randomUUID());
+        testUser.setEmail("test@example.com");
+        testUser.setRole(Role.USER);
+        testUser.setPasswordHash("hashed");
+        testUser.setAuthProvider(AuthProvider.LOCAL);
+        testUser.setCreatedAt(Instant.now());
+        testUser = userJpaRepository.save(testUser);
     }
 
     /*
@@ -122,14 +144,15 @@ class ExpenseRepositoryIntegrationTest {
     @Test
     void save_shouldPersistExpenseAndGenerateId() {
         // given - Create a domain expense (id is null, will be generated)
-        Expense expense = new Expense(null, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch at restaurant",
-                new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
+        Expense expense = new Expense(null, testUser.getId(), UUID.randomUUID(), ExpenseCategory.FOOD,
+                "Lunch at restaurant", new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
 
         // when - Save through our repository
         Expense saved = repository.save(expense);
 
         // then - Verify it was persisted correctly
         assertNotNull(saved.id(), "Database should generate an ID");
+        assertEquals(testUser.getId(), saved.userId());
         assertEquals(expense.publicId(), saved.publicId());
         assertEquals(expense.category(), saved.category());
         assertEquals(expense.description(), saved.description());
@@ -142,19 +165,19 @@ class ExpenseRepositoryIntegrationTest {
 
     /*
      * =========================================================================
-     * TEST: Find by public ID
+     * TEST: Find by public ID and user ID
      * =========================================================================
      * Verifies the custom query method works correctly
      */
     @Test
-    void findByPublicId_shouldReturnExpenseWhenExists() {
+    void findByPublicIdAndUserId_shouldReturnExpenseWhenExists() {
         // given - Insert test data
         UUID publicId = UUID.randomUUID();
         ExpenseJpaEntity entity = createEntity(publicId, "Test expense", "30.00");
         jpaRepository.save(entity);
 
         // when
-        Optional<Expense> result = repository.findByPublicId(publicId);
+        Optional<Expense> result = repository.findByPublicIdAndUserId(publicId, testUser.getId());
 
         // then
         assertTrue(result.isPresent());
@@ -163,12 +186,12 @@ class ExpenseRepositoryIntegrationTest {
     }
 
     @Test
-    void findByPublicId_shouldReturnEmptyWhenNotExists() {
+    void findByPublicIdAndUserId_shouldReturnEmptyWhenNotExists() {
         // given - Random UUID that doesn't exist
         UUID nonExistentId = UUID.randomUUID();
 
         // when
-        Optional<Expense> result = repository.findByPublicId(nonExistentId);
+        Optional<Expense> result = repository.findByPublicIdAndUserId(nonExistentId, testUser.getId());
 
         // then
         assertTrue(result.isEmpty());
@@ -239,15 +262,16 @@ class ExpenseRepositoryIntegrationTest {
         LocalDate date = LocalDate.of(2024, 6, 15);
         Instant createdAt = Instant.parse("2024-06-15T10:30:00Z");
 
-        Expense original = new Expense(null, publicId, ExpenseCategory.ENTERTAINMENT, "Concert tickets",
-                new Money(new BigDecimal("150.00")), date, createdAt);
+        Expense original = new Expense(null, testUser.getId(), publicId, ExpenseCategory.ENTERTAINMENT,
+                "Concert tickets", new Money(new BigDecimal("150.00")), date, createdAt);
 
         // when - Save and retrieve
         Expense saved = repository.save(original);
-        Expense retrieved = repository.findByPublicId(publicId).orElseThrow();
+        Expense retrieved = repository.findByPublicIdAndUserId(publicId, testUser.getId()).orElseThrow();
 
         // then - All fields should match
         assertEquals(publicId, retrieved.publicId());
+        assertEquals(testUser.getId(), retrieved.userId());
         assertEquals(original.category(), retrieved.category());
         assertEquals(original.description(), retrieved.description());
         assertEquals(0, new BigDecimal("150.00").compareTo(retrieved.amount().amount()));
@@ -266,6 +290,7 @@ class ExpenseRepositoryIntegrationTest {
     private ExpenseJpaEntity createEntity(UUID publicId, String description, String amount) {
         ExpenseJpaEntity entity = new ExpenseJpaEntity();
         entity.setPublicId(publicId);
+        entity.setUser(testUser);
         entity.setCategory(ExpenseCategory.OTHER);
         entity.setDescription(description);
         entity.setAmount(new BigDecimal(amount));

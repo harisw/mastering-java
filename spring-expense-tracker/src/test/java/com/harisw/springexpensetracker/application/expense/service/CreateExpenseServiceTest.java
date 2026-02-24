@@ -1,6 +1,8 @@
 package com.harisw.springexpensetracker.application.expense.service;
 
 import com.harisw.springexpensetracker.application.expense.dto.command.CreateExpenseCommand;
+import com.harisw.springexpensetracker.domain.auth.Role;
+import com.harisw.springexpensetracker.domain.auth.User;
 import com.harisw.springexpensetracker.domain.common.Money;
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseCategory;
@@ -28,10 +30,12 @@ class CreateExpenseServiceTest {
     private ExpenseRepository repository;
 
     private CreateExpenseService service;
+    private User user;
 
     @BeforeEach
     void setUp() {
         service = new CreateExpenseService(repository);
+        user = new User(1L, UUID.randomUUID(), "test@example.com", Role.USER, Instant.now());
     }
 
     @Test
@@ -40,13 +44,14 @@ class CreateExpenseServiceTest {
         CreateExpenseCommand command = new CreateExpenseCommand(ExpenseCategory.FOOD, "Lunch at restaurant",
                 new BigDecimal("25.50"), LocalDate.of(2024, 1, 15));
 
-        Expense savedExpense = new Expense(1L, UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch at restaurant",
-                new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
+        Expense savedExpense =
+                new Expense(1L, user.id(), UUID.randomUUID(), ExpenseCategory.FOOD, "Lunch at restaurant",
+                        new Money(new BigDecimal("25.50")), LocalDate.of(2024, 1, 15), Instant.now());
 
         when(repository.save(any(Expense.class))).thenReturn(savedExpense);
 
         // when
-        Expense result = service.create(command);
+        Expense result = service.create(command, user);
 
         // then
         assertEquals(savedExpense, result);
@@ -59,7 +64,7 @@ class CreateExpenseServiceTest {
                 new BigDecimal("2.00"), LocalDate.of(2024, 2, 20));
 
         // when
-        service.create(command);
+        service.create(command, user);
 
         // then
         ArgumentCaptor<Expense> captor = ArgumentCaptor.forClass(Expense.class);
@@ -67,6 +72,7 @@ class CreateExpenseServiceTest {
 
         Expense captured = captor.getValue();
         assertNull(captured.id());
+        assertEquals(user.id(), captured.userId());
         assertNotNull(captured.publicId());
         assertEquals(ExpenseCategory.TRANSPORT, captured.category());
         assertEquals("Bus ticket", captured.description());
@@ -82,8 +88,8 @@ class CreateExpenseServiceTest {
                 new BigDecimal("15.00"), LocalDate.now());
 
         // when
-        service.create(command);
-        service.create(command);
+        service.create(command, user);
+        service.create(command, user);
 
         // then
         ArgumentCaptor<Expense> captor = ArgumentCaptor.forClass(Expense.class);
@@ -102,7 +108,7 @@ class CreateExpenseServiceTest {
                 new BigDecimal("100.00"), LocalDate.now());
 
         // when
-        service.create(command);
+        service.create(command, user);
 
         Instant after = Instant.now();
 

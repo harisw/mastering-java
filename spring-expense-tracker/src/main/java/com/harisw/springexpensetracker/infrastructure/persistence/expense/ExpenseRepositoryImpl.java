@@ -1,4 +1,4 @@
-package com.harisw.springexpensetracker.infrastructure.persistence;
+package com.harisw.springexpensetracker.infrastructure.persistence.expense;
 
 import com.harisw.springexpensetracker.domain.expense.Expense;
 import com.harisw.springexpensetracker.domain.expense.ExpenseRepository;
@@ -23,13 +23,18 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
     }
 
     @Override
-    public Optional<Expense> findByPublicId(UUID publicId) {
-        return jpa.findByPublicId(publicId).map(ExpenseMapper::toDomain);
+    public Optional<Expense> findByPublicIdAndUserId(UUID publicId, Long userId) {
+        return jpa.findByPublicIdAndUserId(publicId, userId).map(ExpenseMapper::toDomain);
     }
 
     @Override
     public List<Expense> findAll() {
         return jpa.findAll().stream().map(ExpenseMapper::toDomain).toList(); // Java 16+
+    }
+
+    @Override
+    public List<Expense> findByUserId(Long userId) {
+        return jpa.findByUserId(userId).stream().map(ExpenseMapper::toDomain).toList();
     }
 
     @Override
